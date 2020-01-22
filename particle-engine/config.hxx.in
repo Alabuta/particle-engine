@@ -1,0 +1,4 @@
+#pragma once
+
+#define PROJECT_VERSION_MAJOR @particle-engine_VERSION_MAJOR@
+#define PROJECT_VERSION_MINOR @particle-engine_VERSION_MINOR@
