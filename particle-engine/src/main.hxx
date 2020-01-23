@@ -17,5 +17,6 @@ using namespace std::string_view_literals;
 
 #include "config.hxx"
 #include "utility/helpers.hxx"
+#include "gfx/context.hxx"
 #include "platform/input/input_manager.hxx"
 #include "platform/window.hxx"

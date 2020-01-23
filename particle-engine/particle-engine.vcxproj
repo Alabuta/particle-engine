@@ -97,6 +97,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\config.hxx" />
+    <ClInclude Include="src\gfx\context.hxx" />
     <ClInclude Include="src\main.hxx" />
     <ClInclude Include="src\math\math.hxx" />
     <ClInclude Include="src\platform\input\input_data.hxx" />
