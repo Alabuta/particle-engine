@@ -17,6 +17,7 @@ find_package(OpenGL REQUIRED)
 
 find_package(glm REQUIRED)
 find_package(glfw3 3.3 REQUIRED)
+find_package(GLEW 2.1 REQUIRED)
 find_package(fmt 5.3 CONFIG REQUIRED)
 find_package(Boost 1.69 REQUIRED)
 
@@ -32,14 +33,19 @@ include_directories(src)
 set(SOURCE_FILES
     src/math/math.hxx                               src/math/math.cxx
 
+    src/gfx/context.hxx
+
     src/platform/input/input_data.hxx
     src/platform/input/input_manager.hxx            src/platform/input/input_manager.cxx
     src/platform/input/mouse.hxx                    src/platform/input/mouse.cxx
 
     src/platform/window.hxx                         src/platform/window.cxx
 
-	src/utility/mpl.hxx
+	src/utility/barrier.hxx                         src/utility/barrier.cxx
 	src/utility/helpers.hxx
+	src/utility/mpl.hxx
+
+    src/particle_engine.hxx                         src/particle_engine.cxx
 
     src/main.hxx                                    src/main.cxx
 )
@@ -138,6 +144,9 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     OpenGL::GL
 
     glm
+
     glfw
+    GLEW::GLEW
+
 	fmt::fmt
 )
