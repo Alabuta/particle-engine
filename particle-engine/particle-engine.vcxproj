@@ -93,6 +93,7 @@
     <ClCompile Include="src\platform\input\input_manager.cxx" />
     <ClCompile Include="src\platform\input\mouse.cxx" />
     <ClCompile Include="src\platform\window.cxx" />
+    <ClCompile Include="src\utility\barrier.cxx" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\config.hxx" />
@@ -102,6 +103,7 @@
     <ClInclude Include="src\platform\input\input_manager.hxx" />
     <ClInclude Include="src\platform\input\mouse.hxx" />
     <ClInclude Include="src\platform\window.hxx" />
+    <ClInclude Include="src\utility\barrier.hxx" />
     <ClInclude Include="src\utility\exceptions.hxx" />
     <ClInclude Include="src\utility\helpers.hxx" />
     <ClInclude Include="src\utility\mpl.hxx" />
