@@ -46,21 +46,43 @@
 #include "main.hxx"
 
 
-void init_context(platform::window const &window)
+namespace app
 {
-    //glfwSwapInterval(-1);
+    struct state final {
+        std::array<std::int32_t, 2> window_size{0, 0};
+    };
 }
 
-void update()
+void update(app::state const &state)
 {
     ;
 }
 
-void render()
+void render(app::state const &state)
 {
-    glViewport(0, 0, 1024, 768);
+    auto [width, height] = state.window_size;
+
+    glViewport(0, 0, width, height);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
+
+class window_event_handler final : public platform::window::event_handler_interface {
+public:
+
+    window_event_handler(app::state &app_state) noexcept : app_state{app_state} { }
+
+    void on_resize(std::int32_t width, std::int32_t height) override
+    {
+        if (width * height == 0)
+            return;
+
+        app_state.window_size = std::array{width, height};
+    }
+
+private:
+
+    app::state &app_state;
+};
 
 
 int main()
@@ -82,26 +104,41 @@ int main()
     if (auto result = glfwInit(); result != GLFW_TRUE)
         throw std::runtime_error(fmt::format("failed to init GLFW: {0:#x}\n"s, result));
 
+    app::state state{std::array{800, 600}};
 
-    platform::window window{"IslandEngine"sv, 1024, 768};
+    auto [width, height] = state.window_size;
 
-    glfwMakeContextCurrent(window.handle());
+    platform::window window{"particle-engine"sv, width, height};
 
-    /*auto app_window_events_handler = std::make_shared<window_events_handler>(app);
+    gfx::context context{window};
+
+    auto app_window_events_handler = std::make_shared<window_event_handler>(state);
     window.connect_event_handler(app_window_events_handler);
 
     auto input_manager = std::make_shared<platform::input_manager>();
-    window.connect_input_handler(input_manager);*/
+    window.connect_input_handler(input_manager);
+
+    if (auto result = glGetError(); result != GL_NO_ERROR)
+        throw std::runtime_error(fmt::format("OpenGL error: {0:#x}\n"s, result));
+
+    auto last = std::chrono::high_resolution_clock::now();
 
     window.update([&]
     {
         glfwPollEvents();
 
-        update();
+        auto now = std::chrono::high_resolution_clock::now();
+        auto delta_time = static_cast<std::uint64_t>(std::chrono::duration_cast<std::chrono::milliseconds>(now - last).count());
+        last = now;
 
-        render();
+        update(state);
+
+        render(state);
 
         glfwSwapBuffers(window.handle());
+
+        if (auto result = glGetError(); result != GL_NO_ERROR)
+            throw std::runtime_error(fmt::format("OpenGL error: {0:#x}\n"s, result));
     });
 
     glfwTerminate();
