@@ -90,6 +90,7 @@
   <ItemGroup>
     <ClCompile Include="src\main.cxx" />
     <ClCompile Include="src\math\math.cxx" />
+    <ClCompile Include="src\particle_engine.cxx" />
     <ClCompile Include="src\platform\input\input_manager.cxx" />
     <ClCompile Include="src\platform\input\mouse.cxx" />
     <ClCompile Include="src\platform\window.cxx" />
@@ -100,6 +101,7 @@
     <ClInclude Include="src\gfx\context.hxx" />
     <ClInclude Include="src\main.hxx" />
     <ClInclude Include="src\math\math.hxx" />
+    <ClInclude Include="src\particle_engine.hxx" />
     <ClInclude Include="src\platform\input\input_data.hxx" />
     <ClInclude Include="src\platform\input\input_manager.hxx" />
     <ClInclude Include="src\platform\input\mouse.hxx" />
