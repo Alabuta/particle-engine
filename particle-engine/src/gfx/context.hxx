@@ -52,6 +52,9 @@ namespace gfx {
 
             glDisable(GL_CULL_FACE);
 
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glEnable(GL_BLEND);
+
             glEnable(GL_DEPTH_TEST);
             glEnable(GL_DEPTH_CLAMP);
             glDepthFunc(GL_LESS);
@@ -60,7 +63,7 @@ namespace gfx {
         }
     };
 
-    void draw_point(float x, float y, float r, float g, float b, float a)
+    inline void draw_point(float x, float y, float r, float g, float b, float a)
     {
         glColor4f(r, g, b, a);
         glVertex2f(x, y);

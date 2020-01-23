@@ -6,6 +6,7 @@
 #include <array>
 
 #include "utility/barrier.hxx"
+#include "math/math.hxx"
 
 
 namespace app
@@ -15,23 +16,20 @@ namespace app
     auto constexpr TOTAL_PARTICLES_COUNT = EFFECTS_COUNT * PER_EFFECT_PARTICLES_COUNT;
     auto constexpr DEAD_PARTICLE_EXPLOSION_CHANCE = .25f;
     
-    using vec2 = std::array<float, 2>;
-    using vec4 = std::array<float, 4>;
-    
     struct particle final {
         std::chrono::milliseconds born_time{0}; // ms
         std::chrono::milliseconds time_stamp{0}; // ms
 
-        vec2 position{0, 0};
-        vec2 velocity{0, 0};
-        vec4 color{0, 0, 0, 0};
+        glm::vec2 position{0};
+        glm::vec2 velocity{0};
+        glm::vec4 color{0};
     };
 
     struct effect final {
         std::uint32_t count{0};
 
-        vec2 position{0, 0};
-        vec4 color{0, 0, 0, 0};
+        glm::vec2 position{0};
+        glm::vec4 color{0};
     };
 
     struct frame_data final {
@@ -89,7 +87,7 @@ namespace app
 
         void update(std::int64_t dt);
 
-        void spawn_effect(app::vec2 &&position, app::vec4 &&color);
+        void spawn_effect(glm::vec2 &&position, glm::vec4 &&color);
 
     private:
 
@@ -137,7 +135,7 @@ namespace app
         std::uint32_t acquire_frame_index(std::uint32_t index);
         std::uint32_t release_frame_index(std::uint32_t index);
 
-        void randomize_velocity_vector(app::worker_context &worker_context, app::vec2 &velocity);
+        void randomize_velocity_vector(app::worker_context &worker_context, glm::vec2 &velocity);
 
         static bool is_particle_outside(app::particle const &particle);
     };

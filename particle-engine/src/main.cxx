@@ -1,4 +1,3 @@
-
 #if defined(_DEBUG) || defined(DEBUG)
     #if defined(_MSC_VER)
         #define _CRTDBG_MAP_ALLOC
@@ -44,46 +43,53 @@
 #endif
 
 #include "main.hxx"
+#include "particle_engine.hxx"
 
 
-namespace app
-{
-    struct state final {
-        std::array<std::int32_t, 2> window_size{0, 0};
-    };
-}
-
-void update(app::state const &state)
-{
-    ;
-}
-
-void render(app::state const &state)
-{
-    auto [width, height] = state.window_size;
-
-    glViewport(0, 0, width, height);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-}
-
-class window_event_handler final : public platform::window::event_handler_interface {
+class mouse_handler final : public platform::mouse::handler_interface {
 public:
 
-    window_event_handler(app::state &app_state) noexcept : app_state{app_state} { }
-
-    void on_resize(std::int32_t width, std::int32_t height) override
-    {
-        if (width * height == 0)
-            return;
-
-        app_state.window_size = std::array{width, height};
-    }
+    mouse_handler(std::shared_ptr<app::particle_engine> particle_engine) : particle_engine{particle_engine} { }
 
 private:
 
-    app::state &app_state;
-};
+    std::weak_ptr<app::particle_engine> particle_engine;
 
+    std::random_device random_device;
+    std::mt19937 generator;
+
+    std::uniform_real_distribution<float> uniform_real_distribution;
+
+    float last_x{0.f}, last_y{0.f};
+
+    void on_wheel(float, float) override { }
+    void on_down(handler_interface::buttons_t) override { }
+
+    void on_move(float x, float y) override
+    {
+        last_x = x;
+        last_y = y;
+    }
+
+    void on_up(handler_interface::buttons_t buttons) override
+    {
+        if (buttons.to_ulong() != 0x01)
+            return;
+        
+        if (particle_engine.expired())
+            return;
+
+        glm::vec4 color{
+            uniform_real_distribution(generator),
+            uniform_real_distribution(generator),
+            uniform_real_distribution(generator),
+            1.f
+        };
+
+        if (auto observe = particle_engine.lock(); observe)
+            observe->spawn_effect(glm::vec2{last_x, last_y}, std::move(color));
+    }
+};
 
 int main()
 {
@@ -92,7 +98,7 @@ int main()
         _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
     #endif
 #else
-    static_assert(__cpp_concepts >= 201500); // check compiled with -fconcepts
+    // static_assert(__cpp_concepts >= 201500); // check compiled with -fconcepts
     static_assert(__cplusplus >= 201703L);
 
     #if defined(_DEBUG) || defined(DEBUG)
@@ -104,19 +110,21 @@ int main()
     if (auto result = glfwInit(); result != GLFW_TRUE)
         throw std::runtime_error(fmt::format("failed to init GLFW: {0:#x}\n"s, result));
 
-    app::state state{std::array{800, 600}};
-
-    auto [width, height] = state.window_size;
-
-    platform::window window{"particle-engine"sv, width, height};
+    platform::window window{"particle-engine"sv, app::SCREEN_WIDTH, app::SCREEN_HEIGHT};
 
     gfx::context context{window};
 
-    auto app_window_events_handler = std::make_shared<window_event_handler>(state);
-    window.connect_event_handler(app_window_events_handler);
-
     auto input_manager = std::make_shared<platform::input_manager>();
     window.connect_input_handler(input_manager);
+
+    auto particle_engine = std::make_shared<app::particle_engine>();
+
+    std::shared_ptr<mouse_handler> mouse_handler;
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, app::SCREEN_WIDTH, 0, app::SCREEN_HEIGHT, 0, 40);
+	glMatrixMode(GL_MODELVIEW); 
 
     if (auto result = glGetError(); result != GL_NO_ERROR)
         throw std::runtime_error(fmt::format("OpenGL error: {0:#x}\n"s, result));
@@ -128,18 +136,25 @@ int main()
         glfwPollEvents();
 
         auto now = std::chrono::high_resolution_clock::now();
-        auto delta_time = static_cast<std::uint64_t>(std::chrono::duration_cast<std::chrono::milliseconds>(now - last).count());
+        auto delta_time = std::chrono::duration_cast<std::chrono::milliseconds>(now - last).count();
         last = now;
 
-        update(state);
+        particle_engine->update(delta_time);
 
-        render(state);
+        glViewport(0, 0, app::SCREEN_WIDTH, app::SCREEN_HEIGHT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        glBegin(GL_POINTS);
+            particle_engine->render();
+        glEnd();
 
         glfwSwapBuffers(window.handle());
 
         if (auto result = glGetError(); result != GL_NO_ERROR)
             throw std::runtime_error(fmt::format("OpenGL error: {0:#x}\n"s, result));
     });
+
+    particle_engine.reset();
 
     glfwTerminate();
 }

@@ -1,13 +1,6 @@
-#include <cmath>
-
-//#include "app.h"
+#include "main.hxx"
 #include "particle_engine.hxx"
 
-
-namespace
-{
-    auto constexpr kPI = 3.14159265358979323846f;
-}
 
 namespace app
 {
@@ -57,13 +50,13 @@ namespace app
             auto &&position = particle.position;
             auto &&color = particle.color;
 
-            app::drawPoint(position.at(0), position.at(1), color.at(0), color.at(1), color.at(2), color.at(3));
+            gfx::draw_point(position.x, position.y, color.r, color.g, color.b, color.a);
         }
 
         release_frame_index(frame_index);
     }
 
-    void particle_engine::spawn_effect(app::vec2 &&position, app::vec4 &&color)
+    void particle_engine::spawn_effect(glm::vec2 &&position, glm::vec4 &&color)
     {
         auto frame_index = acquire_available_frame_index();
 
@@ -164,7 +157,7 @@ namespace app
         thread_local static std::int64_t last_time = 0;
 
         auto global_time = global_timer.load();
-        worker_context.dt = global_time - last_time;
+        worker_context.dt = static_cast<std::uint64_t>(global_time - last_time);
         last_time = global_time;
 
         worker_context.from_start_time += std::chrono::milliseconds{worker_context.dt};
@@ -208,11 +201,8 @@ namespace app
 
                 auto dt = static_cast<float>(worker_context.dt) * 1e-3f;
 
-                write_particle.position.at(0) = read_particle.position.at(0) + read_particle.velocity.at(0) * dt;
-                write_particle.position.at(1) = read_particle.position.at(1) + read_particle.velocity.at(1) * dt;
-
-                write_particle.velocity.at(0) = read_particle.velocity.at(0) * C_DRAG;
-                write_particle.velocity.at(1) = read_particle.velocity.at(1) * C_DRAG - G_ACCEL * dt;
+                write_particle.position = read_particle.position + read_particle.velocity * dt;
+                write_particle.velocity = read_particle.velocity * C_DRAG - glm::vec2{0, G_ACCEL * dt};
 
                 ++job_count;
             }
@@ -268,7 +258,7 @@ namespace app
         }
     }
 
-    void particle_engine::randomize_velocity_vector(app::worker_context &worker_context, app::vec2 &velocity)
+    void particle_engine::randomize_velocity_vector(app::worker_context &worker_context, glm::vec2 &velocity)
     {
         auto &&generator = worker_context.generator;
         auto &&uniform_real_distribution = worker_context.uniform_real_distribution;
@@ -276,13 +266,12 @@ namespace app
         auto angle = uniform_real_distribution(generator) * kPI * 2.f;
         auto speed = (uniform_real_distribution(generator) * .75f + .25f) * 100.f;
 
-        velocity.at(0) = std::cos(angle) * speed;
-        velocity.at(1) = std::sin(angle) * speed;
+        velocity = glm::vec2{std::cos(angle), std::sin(angle)} * speed;
     }
 
     bool particle_engine::is_particle_outside(app::particle const &particle)
     {
         auto &&position = particle.position;
-        return position.at(0) < 0 || position.at(0) > app::SCREEN_WIDTH || position.at(1) < 0 || position.at(1) > app::SCREEN_HEIGHT;
+        return position.x < 0 || position.x > app::SCREEN_WIDTH || position.y < 0 || position.y > app::SCREEN_HEIGHT;
     }
 }

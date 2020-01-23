@@ -2,9 +2,9 @@
 
 
 #include <iostream>
-#include <sstream>
-#include <array>
+#include <memory>
 #include <vector>
+#include <array>
 
 #include <string>
 using namespace std::string_literals;
@@ -17,18 +17,19 @@ using namespace std::string_view_literals;
 
 #include "config.hxx"
 #include "utility/helpers.hxx"
+#include "math/math.hxx"
 #include "gfx/context.hxx"
 #include "platform/input/input_manager.hxx"
 #include "platform/window.hxx"
 
 namespace app
 {
-	const float SCREEN_WIDTH = 1024;
-	const float SCREEN_HEIGHT = 768;
+	auto constexpr SCREEN_WIDTH = 1024u;
+	auto constexpr SCREEN_HEIGHT = 768u;
 
-	void render(void); // Only platform::drawPoint should be used
-	void update(int dt); // dt in milliseconds
-	void on_click(int x, int y); // x, y - in pixels
+	void render();
+	void update(int dt);
+	void on_click(int x, int y);
 
 	void init(void);
 	void term(void);
