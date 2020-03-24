@@ -119,12 +119,13 @@ int main()
 
     auto particle_engine = std::make_shared<app::particle_engine>();
 
-    std::shared_ptr<mouse_handler> mouse_handler;
+    auto mouse_handler = std::make_shared<::mouse_handler>(particle_engine);
+    input_manager->mouse().connect_handler(mouse_handler);
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(0, app::SCREEN_WIDTH, 0, app::SCREEN_HEIGHT, 0, 40);
-	glMatrixMode(GL_MODELVIEW); 
+	glMatrixMode(GL_MODELVIEW);
 
     if (auto result = glGetError(); result != GL_NO_ERROR)
         throw std::runtime_error(fmt::format("OpenGL error: {0:#x}\n"s, result));

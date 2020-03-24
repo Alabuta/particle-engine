@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <iostream>
 #include <memory>
 #include <vector>
@@ -14,13 +13,21 @@ using namespace std::string_view_literals;
 
 #include <fmt/format.h>
 
-
 #include "config.hxx"
 #include "utility/helpers.hxx"
 #include "math/math.hxx"
 #include "gfx/context.hxx"
 #include "platform/input/input_manager.hxx"
 #include "platform/window.hxx"
+
+#ifdef max
+    #undef max
+#endif
+
+#ifdef min
+    #undef min
+#endif
+
 
 namespace app
 {
