@@ -49,7 +49,8 @@
 class mouse_handler final : public platform::mouse::handler_interface {
 public:
 
-    mouse_handler(std::shared_ptr<app::particle_engine> particle_engine) : particle_engine{particle_engine} { }
+    mouse_handler(std::shared_ptr<app::particle_engine> particle_engine)
+        : particle_engine{particle_engine}, generator{random_device()} { }
 
 private:
 
@@ -58,7 +59,7 @@ private:
     std::random_device random_device;
     std::mt19937 generator;
 
-    std::uniform_real_distribution<float> uniform_real_distribution;
+    std::uniform_real_distribution<float> uniform_real_distribution{0.f, 1.f};
 
     float last_x{0.f}, last_y{0.f};
 
