@@ -81,9 +81,9 @@ private:
             return;
 
         glm::vec4 color{
+            /*uniform_real_distribution(generator),
             uniform_real_distribution(generator),
-            uniform_real_distribution(generator),
-            uniform_real_distribution(generator),
+            uniform_real_distribution(generator),*/
             1.f
         };
 
