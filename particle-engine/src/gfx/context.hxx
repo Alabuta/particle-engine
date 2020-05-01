@@ -3,7 +3,9 @@
 #include <string>
 using namespace std::string_literals;
 
+#pragma warning(disable : 4275)
 #include <fmt/format.h>
+#pragma warning(default : 4275)
 
 //#define GL_GLEXT_PROTOTYPES 0
 

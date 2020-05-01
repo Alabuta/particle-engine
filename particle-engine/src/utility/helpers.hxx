@@ -3,6 +3,7 @@
 #include <type_traits>
 #include <iterator>
 #include <utility>
+#include <cstdint>
 #include <cstddef>
 #include <cmath>
 #include <chrono>

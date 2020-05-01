@@ -11,7 +11,9 @@ using namespace std::string_literals;
 #include <string_view>
 using namespace std::string_view_literals;
 
+#pragma warning(disable : 4275)
 #include <fmt/format.h>
+#pragma warning(default : 4275)
 
 #include "config.hxx"
 #include "utility/helpers.hxx"
