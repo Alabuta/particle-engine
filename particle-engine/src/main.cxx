@@ -81,14 +81,14 @@ private:
             return;
 
         glm::vec4 color{
-            /*uniform_real_distribution(generator),
             uniform_real_distribution(generator),
-            uniform_real_distribution(generator),*/
+            uniform_real_distribution(generator),
+            uniform_real_distribution(generator),
             1.f
         };
 
         if (auto observe = particle_engine.lock(); observe)
-            observe->spawn_effect(glm::vec2{last_x, last_y}, std::move(color));
+            observe->spawn_effect(glm::vec2{last_x, app::SCREEN_HEIGHT - last_y}, std::move(color));
     }
 };
 
