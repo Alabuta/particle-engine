@@ -1,5 +1,12 @@
-#include "main.hxx"
 #include "particle_engine.hxx"
+
+#ifdef max
+#undef max
+#endif
+
+#ifdef min
+#undef min
+#endif
 
 
 namespace app

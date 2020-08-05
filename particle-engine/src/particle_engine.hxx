@@ -1,12 +1,15 @@
 #pragma once
 
+#include <algorithm>
+#include <memory>
+#include <thread>
 #include <atomic>
 #include <vector>
 #include <random>
 #include <array>
 
+#include "main.hxx"
 #include "utility/barrier.hxx"
-#include "math/math.hxx"
 
 
 namespace app
