@@ -35,12 +35,20 @@ target_sources(${EXECUTABLE_TARGET_NAME}
         src/main.hxx                                    src/main.cxx
 )
 
+set(glfw3_DIR "../external/glfw")
+
+set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "GLFW_BUILD_EXAMPLES" FORCE)
+set(GLFW_BUILD_TESTS OFF CACHE BOOL "GLFW_BUILD_TESTS" FORCE)
+set(GLFW_BUILD_DOCS OFF CACHE BOOL "GLFW_BUILD_DOCS" FORCE)
+set(GLFW_INSTALL OFF CACHE BOOL "GLFW_INSTALL" FORCE)
+add_subdirectory("../external/glfw" ${CMAKE_BINARY_DIR}/glfw)
+
 find_package(OpenGL REQUIRED)
 
-find_package(glm REQUIRED)
+# find_package(glm REQUIRED)
 find_package(glfw3 3.3 REQUIRED)
-find_package(GLEW 2.1 REQUIRED)
-find_package(fmt 7.0 CONFIG REQUIRED)
+# find_package(GLEW 2.1 REQUIRED)
+# find_package(fmt 7.0 CONFIG REQUIRED)
 find_package(Boost 1.69 REQUIRED)
 
 if(NOT WIN32)
@@ -48,6 +56,19 @@ if(NOT WIN32)
 endif()
 
 
+# target_include_directories(${EXECUTABLE_TARGET_NAME}
+#     PUBLIC
+#         ${GLFW_INCLUDE_DIR}
+#         "${CMAKE_CURRENT_SOURCE_DIR}/include"
+
+#     PRIVATE
+#         # $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/>
+#         "${CMAKE_CURRENT_SOURCE_DIR}/src"
+# )
+# TODO:: replace by target_include_directories
+# include_directories(SYSTEM
+#     "external/glm"
+# )
 include_directories(SYSTEM include)
 include_directories(src)
 
@@ -128,9 +149,7 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
             # LINKER: -no-allow-shlib-undefined           # Disallows undefined symbols in shared libraries
             LINKER: -unresolved-symbols=report-all
     )
-endif ()
-
-if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     target_compile_options(${EXECUTABLE_TARGET_NAME}
         PRIVATE
             -Wpedantic
@@ -154,9 +173,7 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 
             #-fsanitize=thread -fsanitize=address
     )
-endif ()
-
-if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+elseif (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     target_compile_options(${EXECUTABLE_TARGET_NAME}
         PRIVATE
             /permissive
@@ -186,7 +203,8 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
 endif ()
 
 
-target_include_directories(${PROJECT_NAME} PRIVATE
+target_include_directories(${EXECUTABLE_TARGET_NAME}
+    SYSTEM PRIVATE
     OpenGL::GL
 )
 
